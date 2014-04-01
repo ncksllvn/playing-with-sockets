@@ -1,0 +1,24 @@
+<script src="/js/components/underscore/underscore.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    
+  var socket = io.connect('http://localhost');
+  var Cursor = function(event){
+    this.x = event.x, this.y = event.y;
+  };
+  
+  var onmousemove = function(e){ 
+    socket.emit('my cursor moved', new Cursor(e));
+  };
+  
+
+  
+  socket.on('other cursor moved', function (data) {
+    console.log(data);
+  });
+  
+  
+  
+  document.onmousemove =  _.throttle( onmousemove, 25 );
+  
+</script>

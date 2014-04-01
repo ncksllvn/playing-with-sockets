@@ -1,0 +1,30 @@
+{
+  "name": "testing-socket",
+  "version": "0.0.0",
+  "description": "playing with socket",
+  "main": "server.js",
+  "dependencies": {
+    "socket.io": "^0.9.16",
+    "express": "^3.5.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node server",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/ncksllvn/playing-with-sockets"
+  },
+  "keywords": [
+    "node",
+    "javascript",
+    "socket-io"
+  ],
+  "author": "nick sullivan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ncksllvn/playing-with-sockets/issues"
+  },
+  "homepage": "https://github.com/ncksllvn/playing-with-sockets"
+}
