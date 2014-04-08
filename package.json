@@ -5,7 +5,8 @@
   "main": "server.js",
   "dependencies": {
     "socket.io": "^0.9.16",
-    "express": "^3.5.1"
+    "express": "^3.5.1",
+    "underscore": "^1.6.0"
   },
   "devDependencies": {},
   "scripts": {
