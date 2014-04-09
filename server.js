@@ -27,6 +27,12 @@ io.sockets.on('connection', function (socket) {
     
     socket.broadcast.emit('users:joined', user);
     
+    socket.on('users:moved', function(data){
+        user.x = data.x;
+        user.y = data.y;
+        socket.broadcast.emit('users:moved', user);
+    });
+    
     socket.on('disconnect', function(){
         socket.broadcast.emit('users:left', user.id);
         delete users[user.id];

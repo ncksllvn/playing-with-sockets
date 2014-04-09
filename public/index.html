@@ -4,81 +4,59 @@
 <canvas resize="true" id="canvas"></canvas>
 <script src="/js/components/paper/dist/paper-full.js"></script>
 <script src="/socket.io/socket.io.js"></script>
-<script type="text/paperscript" canvas="canvas">
+<script type="text/paperscript" canvas="canvas" keepalive="true">
   
-  /*
-  var User = (function(){
+  var Cursor = (function(){
   
-    var circle = new Path.Circle({ radius: 10, center: [-100, -100] });
-    circle.strokeColor = 'black';
+    var marker = new Path.Circle({ radius: 10, center: [-100, -100] });
+    marker.strokeColor = 'black';
     
-    function User(id){
-        this.circle = circle.clone();
-        this.id = id;
+    function Cursor(user){
+        this.id = user && user.id;
+        this.marker = marker.clone();
     }
-    
-    User.prototype.update = function(x, y){
-        this.circle.position = new Point( x, y );
-        socket.emit('user:movement', x, y);
+    Cursor.prototype.update = function(x, y){
+        this.x = x;
+        this.y = y;
+        this.marker.position = new Point( this.x, this.y );
     };
-    
-    return User;
-    
+    Cursor.prototype.remove = function(){
+        this.marker.remove();
+    };
+    Cursor.prototype.toJSON = function(){
+        return { id: this.id, x: this.x, y: this.y };
+    };
+    return Cursor;
   })();
   
-  var users = (function(){
-    
-    var users = {};
-    
-    users.init = function(usersRetrieved){
-        for (var i in usersRetrieved) users.add(usersRetrieved[i]);
-    };
-    
-    users.add = function(user){
-        users[user.id] = new User();
-    };
-    
-    users.update = function(id, x, y){
-        users[id].update(x, y);
-    };
-    
-    return users;
-    
-  })();
-  
+  var me = new Cursor;
+  var users = {};
   var socket = io.connect('http://localhost');
-  socket.on('users', users.init);
-  socket.on('user:new', users.add);
-  socket.on('user:movement',  users.update);
   
-  var me;
+  socket.on('users', function(usersInit){
   
-  socket.on('user', function(id){
-    me = new User(id);
+    for ( var i in usersInit )
+        users[i] = new Cursor( usersInit[i] );
+        
+    socket.on('users:joined', function(user){
+        users[user.id] = new Cursor(user);
+    });
+      
+    socket.on('users:left', function(id){
+        users[id].remove();
+        delete users[id];
+    });
+    
+    socket.on('users:moved', function(user){
+        users[user.id].update( user.x, user.y );
+    });
+    
   });
   
   function onMouseMove(e){
     me.update(e.point.x, e.point.y);
-  }*/
-  
-  var socket = io.connect('http://localhost');
-  
-  socket.on('users', function(users){
-  
-    console.log(users);
-    
-    socket.on('users:joined', function(user){
-        users[user.id] = user;
-        console.log(users);
-    });
-      
-    socket.on('users:left', function(id){
-        delete users[id];
-        console.log(users);
-    });
-    
-  });
-  
+    socket.emit('users:moved', me.toJSON());
+  }
   
   
 </script>
