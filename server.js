@@ -1,44 +1,43 @@
+(function() {
+  var app, express, id, io, server, users;
 
+  express = require('express');
 
-var express = require('express');
-var app = express();
-var server = app.listen(80);
-var io = require('socket.io').listen(server);
-var _ = require('underscore');
+  app = express();
 
-app.use(express.logger());
+  server = app.listen(80);
 
-app.use(express.static(__dirname + '/public'));
+  io = require('socket.io').listen(server);
 
-app.get('/', function(req, res){
-    res.render('public/index');
-});
+  app.use(express.logger());
 
-var users = {};
-var id = 0;
+  app.use(express["static"](__dirname + '/public'));
 
-io.sockets.on('connection', function (socket) {
+  app.get('/', function(req, res) {
+    return res.render('public/index');
+  });
 
+  users = {};
+
+  id = 0;
+
+  io.sockets.on('connection', function(socket) {
+    var user;
     socket.emit('users', users);
-    
-    var user = { id: id++ };
-    
+    user = {
+      id: id++
+    };
     users[user.id] = user;
-    
     socket.broadcast.emit('users:joined', user);
-    
-    socket.on('users:moved', function(data){
-        user.x = data.x;
-        user.y = data.y;
-        socket.broadcast.emit('users:moved', user);
+    socket.on('users:moved', function(data) {
+      user.x = data.x;
+      user.y = data.y;
+      return socket.broadcast.emit('users:moved', user);
     });
-    
-    socket.on('disconnect', function(){
-        socket.broadcast.emit('users:left', user.id);
-        delete users[user.id];
+    return socket.on('disconnect', function() {
+      socket.broadcast.emit('users:left', user.id);
+      return delete users[user.id];
     });
-    
-    
-  
-});
+  });
 
+}).call(this);

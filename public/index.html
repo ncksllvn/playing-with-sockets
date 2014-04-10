@@ -4,61 +4,6 @@
 <canvas resize="true" id="canvas"></canvas>
 <script src="/js/components/paper/dist/paper-full.js"></script>
 <script src="/socket.io/socket.io.js"></script>
-<script type="text/paperscript" canvas="canvas" keepalive="true">
-  
-  var Cursor = (function(){
-  
-    var marker = new Path.Circle({ radius: 10, center: [-100, -100] });
-    marker.strokeColor = 'black';
-    
-    function Cursor(user){
-        this.id = user && user.id;
-        this.marker = marker.clone();
-    }
-    Cursor.prototype.update = function(x, y){
-        this.x = x;
-        this.y = y;
-        this.marker.position = new Point( this.x, this.y );
-    };
-    Cursor.prototype.remove = function(){
-        this.marker.remove();
-    };
-    Cursor.prototype.toJSON = function(){
-        return { id: this.id, x: this.x, y: this.y };
-    };
-    return Cursor;
-  })();
-  
-  var me = new Cursor;
-  var users = {};
-  var socket = io.connect('http://localhost');
-  
-  socket.on('users', function(usersInit){
-  
-    for ( var i in usersInit )
-        users[i] = new Cursor( usersInit[i] );
-        
-    socket.on('users:joined', function(user){
-        users[user.id] = new Cursor(user);
-    });
-      
-    socket.on('users:left', function(id){
-        users[id].remove();
-        delete users[id];
-    });
-    
-    socket.on('users:moved', function(user){
-        users[user.id].update( user.x, user.y );
-    });
-    
-  });
-  
-  function onMouseMove(e){
-    me.update(e.point.x, e.point.y);
-    socket.emit('users:moved', me.toJSON());
-  }
-  
-  
-</script>
+<script type="text/paperscript" src="/js/main.js" canvas="canvas"</script>
 </body>
 </html>
