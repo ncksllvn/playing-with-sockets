@@ -5,13 +5,12 @@
   "main": "server.js",
   "dependencies": {
     "socket.io": "^0.9.16",
-    "express": "^3.5.1",
-    "underscore": "^1.6.0",
-    "grunt": "^0.4.4",
-    "grunt-contrib-coffee": "^0.10.1"
+    "express": "^3.5.1"
   },
   "devDependencies": {
-    "grunt-contrib-watch": "^0.6.1"
+    "grunt": "^0.4.4",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-contrib-coffee": "^0.10.1"
   },
   "scripts": {
     "test": "node server",

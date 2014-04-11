@@ -19,19 +19,17 @@ io.sockets.on 'connection', (socket) ->
 
     socket.emit 'users', users
     
-    user = { id: id++ }
+    user = 
+        id: id++
     
     users[user.id] = user
     
     socket.broadcast.emit 'users:joined', user
     
     socket.on 'users:moved', (data)->
-        user.x = data.x
-        user.y = data.y
+        [user.x, user.y] = [data.x, data.y]
         socket.broadcast.emit 'users:moved', user
-    
-    
+        
     socket.on 'disconnect', ->
         socket.broadcast.emit 'users:left', user.id
         delete users[user.id]
-
