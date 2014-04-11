@@ -7,16 +7,15 @@ io = require('socket.io').listen server
 
 app.use express.logger()
 
-app.use express.static(__dirname + '/public');
+app.use express.static __dirname + '/public';
 
-app.get('/', (req, res)->
-    res.render('public/index')
-)
+app.get '/', (req, res)->
+    res.render 'public/index'
 
 users = {}
 id = 0
 
-io.sockets.on('connection', (socket) ->
+io.sockets.on 'connection', (socket) ->
 
     socket.emit 'users', users
     
@@ -26,16 +25,13 @@ io.sockets.on('connection', (socket) ->
     
     socket.broadcast.emit 'users:joined', user
     
-    socket.on('users:moved', (data)->
+    socket.on 'users:moved', (data)->
         user.x = data.x
         user.y = data.y
         socket.broadcast.emit 'users:moved', user
-    )
     
-    socket.on('disconnect', ->
+    
+    socket.on 'disconnect', ->
         socket.broadcast.emit 'users:left', user.id
         delete users[user.id]
-    )
-    
-)
 

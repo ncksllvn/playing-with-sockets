@@ -1,7 +1,8 @@
 class Cursor
-    constructor: (@user) ->
-        @id = @user.id if @user
+    constructor: (user) ->
+        [@id, @x, @y] = [user.id, user.x, user.y] if user?
         @marker = @__marker__.clone()
+        @update()
         
     __marker__: (->
         marker = new Path.Circle({ radius: 10, center: [-100, -100] })
@@ -22,29 +23,22 @@ class Cursor
         
 me = new Cursor
 users = {}
-socket = io.connect('http://localhost')
+socket = io.connect 'http://localhost'
 
-socket.on( 'users', (usersInit) ->
+socket.on 'users', (usersInit) ->
     
-    for id, user of usersInit
-        do ( id, user )->
-            users[id] = new Cursor
-            users[id].update()
+    users[id] = new Cursor(user) for id, user of usersInit
             
-    socket.on( 'users:joined', (user) ->
-        users[user.id] = new Cursor
-    )
+    socket.on 'users:joined', (user) ->
+        users[user.id] = new Cursor(user)
         
-    socket.on( 'users:left', (id) ->
+    socket.on 'users:left', (id) ->
         users[id].remove()
         delete users[id]
-    )
     
-    socket.on( 'users:moved', (user) ->
+    socket.on 'users:moved', (user) ->
         users[user.id].update user.x, user.y 
-    )
-)
-
+    
 paper.tools[0] = new Tool
 paper.tool.onMouseMove = (e) ->
     me.update e.point.x, e.point.y
